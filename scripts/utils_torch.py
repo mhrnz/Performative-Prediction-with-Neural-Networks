@@ -36,10 +36,8 @@ class onelayer_NN(nn.Module):
             y_hat = X @ self.theta
 
             return sigmoid_eps(y_hat, self.epsilon)
-        
-#             print(f'sigmoid:{torch.sigmoid(y_hat)}')
-#             return torch.maximum(torch.ones_like(y_hat) * self.epsilon, torch.sigmoid(y_hat))
- 
+
+    
 class twolayers_NN(nn.Module):
     
     def __init__(self, epsilon, mode):
@@ -48,7 +46,7 @@ class twolayers_NN(nn.Module):
         if mode == 'case1':
             self.theta = nn.parameter.Parameter(data=torch.ones((1,))*torch.atanh(torch.tensor(0.5)), requires_grad=True)
         elif mode == 'RS':
-#             self.theta = nn.parameter.Parameter(data=torch.ones((11,), dtype = torch.float64)*torch.atanh(torch.tensor(0.5)), requires_grad=True)
+
             
             self.fc1 = nn.Linear(11, 8, dtype = torch.float64)
             self.leaky_relu = nn.LeakyReLU()
@@ -71,11 +69,7 @@ class twolayers_NN(nn.Module):
             y_hat = torch.squeeze(self.fc2(self.leaky_relu(fc1)))
             return sigmoid_eps(y_hat, self.epsilon)
         
-#             print(f'sigmoid:{torch.sigmoid(y_hat)}')
-#             return torch.maximum(torch.ones_like(y_hat) * self.epsilon, torch.sigmoid(y_hat))
-    
-    
-    
+
 
 def evaluate_logistic_loss(X, Y, l2_penalty, model, eval_bool, mode='RS'):
     """Compute the l2-penalized logistic loss function
@@ -219,20 +213,7 @@ def fit_logistic_regression(X, Y, l2_penalty, model=None, optimizer=None, eval_b
         return theta
     
     elif mode == 'case1': # Considering x and theta to be scalar
-        
-#         print('in fit and case1')
 
-#         eta_init = 1e-2
-
-#         if theta_init is not None:
-#             theta = theta_init.clone()
-#         else:
-#             theta = torch.zeros((1,))
-#             theta[0] = torch.atanh(0.5)
-
-#         theta = theta_init.clone()
-        # Evaluate loss at initialization
-#         y_hat = model(X)
         prev_loss = evaluate_logistic_loss(X, Y, l2_penalty, model, eval_bool, mode = mode)
 
         loss_list = [prev_loss.item()]
@@ -247,7 +228,6 @@ def fit_logistic_regression(X, Y, l2_penalty, model=None, optimizer=None, eval_b
             
             # compute gradient
             optimizer.zero_grad()
-#             theta_0 = model.theta[0]
             prev_loss.backward()
             optimizer.step()
         
@@ -266,11 +246,7 @@ def fit_logistic_regression(X, Y, l2_penalty, model=None, optimizer=None, eval_b
      
 
     elif mode == 'RS': 
-        
-        # Evaluate loss at initialization
-#         y_hat = model(X)
-#         print(labels)
-#         print(f'Y type:{Y.dtype}')
+
 
         prev_loss = evaluate_logistic_loss(X, Y, l2_penalty, model, eval_bool, mode = mode)
         loss_list = [prev_loss.item()]
@@ -282,13 +258,9 @@ def fit_logistic_regression(X, Y, l2_penalty, model=None, optimizer=None, eval_b
             
             # compute gradient
             optimizer.zero_grad()
-#             theta_0 = model.theta[0]
             prev_loss.backward()
             optimizer.step()
-#             if i < 10:
-#                 with torch.no_grad():
-#                     print(model.theta.grad)
-        
+
             # compute new loss
             loss = evaluate_logistic_loss(X, Y, l2_penalty, model, eval_bool, mode = mode)
 
@@ -298,17 +270,5 @@ def fit_logistic_regression(X, Y, l2_penalty, model=None, optimizer=None, eval_b
             prev_loss = loss
 
             i += 1
-#             print(model.theta.detach().numpy())
-            
-#         print(i)
-        
-#         preds = model(X)
-#         print(f'Y type:{Y.dtype}, pred type:{preds.dtype}')
-#         print(((preds > (1.0-model.epsilon)/2.0)*(1.0-model.epsilon)).dtype)
-#         y_pred = ((preds > (1.0-model.epsilon)/2.0)*(1.0-model.epsilon)).float()
-#         print(y_pred.dtype)
-#         res = y_pred == Y.float()
-#         acc = torch.mean(res*1.0).item()
-#         print(f'accuracy in fit_loss:{acc}')
-#         return model.theta.detach().numpy()
+
 
